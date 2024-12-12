@@ -1,0 +1,37 @@
+
+#include"CharStack.h"
+#include<iostream>
+using namespace std;
+CharStack::CharStack() {
+top = -1;
+}
+bool CharStack::isEmpty() const {
+return top < 0;
+}
+void CharStack::push(const char& newEntry) {
+if (top < MAXCHARSTACK - 1) { //if stack is not full
+top++;
+items[top] = newEntry;
+}
+else {
+cout << "The stack is full" << endl;
+}
+}
+char CharStack::pop() {
+if (!isEmpty()) {
+return items[top--];
+}
+else {
+cout << "Stack is empty, cannot pop." << endl;
+return '~';
+}
+}
+char CharStack::peek() const {
+if (!isEmpty()) {
+return items[top];
+}
+else {
+cout << "Stack is empty, cannot peek." << endl;
+return '~';
+}
+}
