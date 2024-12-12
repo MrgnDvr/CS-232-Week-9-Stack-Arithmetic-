@@ -1,0 +1,94 @@
+
+/*This piano solves balanced equations with parenthesis. Assume the user will enter
+equations with parenthesis. Anytime a produc or division takes place the user must
+enter a parentheis around that operation
+* 1 1 1
+0 1 2 3 4 5 6 7 8 9 0 1 2
+for example, 3 + ( 3 * 4 ) - ( 2 / 3 ) */
+#include<iostream>
+#include<string>
+#include"CharStack.h"
+#include"DoubleArrayStack.h"
+using namespace std;
+CharStack* parensStackPtr = new CharStack();
+CharStack* operatorsStackPtr = new CharStack();
+DoubleArrayStack* operandsStackPtr = new DoubleArrayStack();
+int main() {
+//declarations
+string userEquation = "";
+string tempDoubleStr = "";
+double operand1;
+double operand2;
+double result = 0.0;
+char tempChar = 'a';
+bool isFinishedGrabbingDouble = false;
+//get user input
+cout << "Enter a math equation with parenthesis: " << endl;
+getline(cin, userEquation);
+//calculation(s)
+//populate other stacks with parens, operands and operators
+//but make sure to solve any multiplication and division operations immediately
+for (int i = 0; i < userEquation.length(); i++)
+{
+//determine if userEquation item is a number or decimal point //e.g., 123.2
+if (isdigit(static_cast<int>(userEquation[i])) != 0 || userEquation[i] ==
+'.') {
+tempDoubleStr = tempDoubleStr + userEquation[i];
+}
+else {
+if (tempDoubleStr.length() > 0)
+{
+operandsStackPtr->push(stod(tempDoubleStr));
+tempDoubleStr = "";//clear string for next operand
+}
+if (userEquation[i] == '(') {
+parensStackPtr->push(userEquation[i]);
+}
+else if (userEquation[i] == '+' || userEquation[i] == '-' ||
+userEquation[i] == '*' || userEquation[i] == 'x' || userEquation[i] == '/') {
+operatorsStackPtr->push(userEquation[i]);
+}
+else if (userEquation[i] == ')') {
+parensStackPtr->pop(); //remove the initial parens
+operand2 = operandsStackPtr->pop();
+operand1 = operandsStackPtr->pop();
+tempChar = operatorsStackPtr->pop(); //now get the operator
+//solve operation and push result onto the operand stack
+if (tempChar == '+')
+result = operand1 + operand2;
+else if (tempChar == '-')
+result = operand1 - operand2;
+else if (tempChar == '*')
+result = operand1 * operand2;
+else if (tempChar == 'x')
+result = operand1 * operand2;
+else if (tempChar == '/')
+result = operand1 / operand2;
+operandsStackPtr->push(result);
+}
+}
+}
+//at this point the stacks contain addition and subtraction operations. Solve
+the remaining operations and clear the stacks.
+while (operatorsStackPtr->isEmpty() == false) {
+operand2 = operandsStackPtr->pop();
+operand1 = operandsStackPtr->pop();
+tempChar = operatorsStackPtr->pop(); //now get the operator
+//solve operation and push result onto the operand stack
+if (tempChar == '+')
+result = operand1 + operand2;
+else if (tempChar == '-')
+result = operand1 - operand2;
+operandsStackPtr->push(result);
+}
+//output
+cout << "The result of your equation is " << operandsStackPtr->pop() << endl;
+//release resources
+delete parensStackPtr;
+parensStackPtr = nullptr;
+delete operandsStackPtr;
+operandsStackPtr = nullptr;
+delete operatorsStackPtr;
+operatorsStackPtr = nullptr;
+return 0;
+}
